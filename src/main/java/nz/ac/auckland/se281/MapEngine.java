@@ -58,21 +58,23 @@ public class MapEngine {
 
   /** this method is invoked when the user run the command info-country. */
   public void showInfoCountry() {
+    Boolean cExists = false;
     C cElements;
-
     MessageCli.INSERT_COUNTRY.printMessage();
-    String userInput = Utils.scanner.nextLine();
-    userInput = Utils.capitalizeFirstLetterOfEachWord(userInput);
 
-    // if and else block to check if the country the user inputted exists in the map, if it does it
-    // prints its elements
-    // else it returns an error message
-    if (this.cMap.retrieve(userInput) != null) {
-      cElements = this.cMap.retrieve(userInput);
-      MessageCli.COUNTRY_INFO.printMessage(
-          cElements.getCountry(), cElements.getContinent(), cElements.getTaxFees());
-    } else {
-      MessageCli.INVALID_COUNTRY.printMessage(userInput);
+    while (!cExists) {
+      String userInput = Utils.scanner.nextLine();
+      userInput = Utils.capitalizeFirstLetterOfEachWord(userInput);
+      // if and else block to check if the country the user inputted exists in the map, if it does
+      // it prints its elements else it returns an error message
+      if (this.cMap.retrieve(userInput) != null) {
+        cExists = true;
+        cElements = this.cMap.retrieve(userInput);
+        MessageCli.COUNTRY_INFO.printMessage(
+            cElements.getCountry(), cElements.getContinent(), cElements.getTaxFees());
+      } else {
+        MessageCli.INVALID_COUNTRY.printMessage(userInput);
+      }
     }
   }
 
