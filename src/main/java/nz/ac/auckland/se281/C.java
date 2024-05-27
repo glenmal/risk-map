@@ -1,5 +1,9 @@
 package nz.ac.auckland.se281;
 
+/**
+ * C class that defines the country object, containing all country elements (name, continent, tax
+ * fees)
+ */
 public class C {
   private String country = "";
   private String continent = "";

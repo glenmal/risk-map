@@ -71,4 +71,28 @@ public class Utils {
     // Remove the trailing space
     return capitalizedString.toString().trim();
   }
+
+  /**
+   * Accepts a user input from the console and checks if the country inputted is in the country map.
+   * If so it prints the country info, else it throws an exception and prints an error message.
+   *
+   * @param cMap the country map (HashMap)
+   * @return the country object if found in the country map
+   * @throws CountryNotExistantException If the user's input is not in the country map, it throws an
+   *     exception
+   */
+  public static Boolean countryInputCheck(CountryMap cMap) throws CountryNotExistantException {
+    C cElements;
+    MessageCli.INSERT_COUNTRY.printMessage();
+    String userInput = Utils.scanner.nextLine();
+    userInput = Utils.capitalizeFirstLetterOfEachWord(userInput);
+    if (cMap.retrieve(userInput) != null) {
+      cElements = cMap.retrieve(userInput);
+      MessageCli.COUNTRY_INFO.printMessage(
+          cElements.getCountry(), cElements.getContinent(), cElements.getTaxFees());
+      return true;
+    } else {
+      throw new CountryNotExistantException(MessageCli.INVALID_COUNTRY.getMessage(userInput));
+    }
+  }
 }
