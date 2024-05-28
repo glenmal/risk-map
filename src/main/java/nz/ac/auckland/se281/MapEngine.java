@@ -18,18 +18,11 @@ AND
 You should use LinkedList or ArrayList with the List interface at least once in your code. For example:
 List<SOME_OBJECT> var = new LinkedList<>(); or List<SOME_OBJECT> var = new ArrayList<>();
 
-AND
-
-When the user types an incorrect country name (i.e., a country not present in the file),
-your code must throw a custom exception that you created.
-Another part of your code should catch the exception and recover from the issue
-by asking the user to insert another country name.
-
 */
 
 /** This class is the main entry point. */
 public class MapEngine {
-  private CountryMap cMap = new CountryMap();
+  private CountrySet cSet = new CountrySet();
 
   public MapEngine() {
     // add other code here if you want
@@ -41,20 +34,20 @@ public class MapEngine {
     List<String> countries = Utils.readCountries();
     List<String> adjacencies = Utils.readAdjacencies();
 
-    // countries list for loop to create country objects and store in country map
+    // countries list for loop to create country objects and store in country set
     for (String line : countries) {
       String[] lineList = line.split(",");
       C country = new C(lineList);
-      this.cMap.add(lineList[0], country);
+      this.cSet.add(country);
     }
   }
 
   /** this method is invoked when the user run the command info-country. */
   public void showInfoCountry() {
-    Boolean exists = false;
-    while (!exists) {
+    C info = null;
+    while (info == null) {
       try {
-        exists = Utils.countryInputCheck(this.cMap);
+        info = Utils.countryInputCheck(this.cSet, "info");
       } catch (CountryNotExistantException e) {
         System.out.println(e);
       }
@@ -62,5 +55,25 @@ public class MapEngine {
   }
 
   /** this method is invoked when the user run the command route. */
-  public void showRoute() {}
+  public void showRoute() {
+    C journey = null;
+    C destination = null;
+    // user input for starting point
+    while (journey == null) {
+      try {
+        journey = Utils.countryInputCheck(this.cSet, "journey");
+      } catch (CountryNotExistantException e) {
+        System.out.println(e);
+      }
+    }
+
+    // user input for destination
+    while (destination == null) {
+      try {
+        destination = Utils.countryInputCheck(this.cSet, "destination");
+      } catch (CountryNotExistantException e) {
+        System.out.println(e);
+      }
+    }
+  }
 }

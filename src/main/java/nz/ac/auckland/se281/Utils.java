@@ -73,24 +73,32 @@ public class Utils {
   }
 
   /**
-   * Accepts a user input from the console and checks if the country inputted is in the country map.
+   * Accepts a user input from the console and checks if the country inputted is in the country set.
    * If so it prints the country info, else it throws an exception and prints an error message.
    *
-   * @param cMap the country map (HashMap)
-   * @return the country object if found in the country map
-   * @throws CountryNotExistantException If the user's input is not in the country map, it throws an
+   * @param cSet the country set (HashSet)
+   * @return the country object if found in the country set
+   * @throws CountryNotExistantException If the user's input is not in the country set, it throws an
    *     exception
    */
-  public static Boolean countryInputCheck(CountryMap cMap) throws CountryNotExistantException {
+  public static C countryInputCheck(CountrySet cSet, String option)
+      throws CountryNotExistantException {
     C cElements;
-    MessageCli.INSERT_COUNTRY.printMessage();
+    switch (option) {
+      case "journey":
+        MessageCli.INSERT_SOURCE.printMessage();
+      case "info":
+        MessageCli.INSERT_COUNTRY.printMessage();
+      case "destination":
+        MessageCli.INSERT_DESTINATION.printMessage();
+    }
     String userInput = Utils.scanner.nextLine();
     userInput = Utils.capitalizeFirstLetterOfEachWord(userInput);
-    if (cMap.retrieve(userInput) != null) {
-      cElements = cMap.retrieve(userInput);
+    if (cSet.retrieve(userInput) != null) {
+      cElements = cSet.retrieve(userInput);
       MessageCli.COUNTRY_INFO.printMessage(
           cElements.getCountry(), cElements.getContinent(), cElements.getTaxFees());
-      return true;
+      return cElements;
     } else {
       throw new CountryNotExistantException(MessageCli.INVALID_COUNTRY.getMessage(userInput));
     }
