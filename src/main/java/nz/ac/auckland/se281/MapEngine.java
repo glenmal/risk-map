@@ -1,22 +1,10 @@
 package nz.ac.auckland.se281;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-/*
-OOP Requirements
-
-You should use LinkedList with the Queue interface at least once in your code. For example:
-Queue<SOME_OBJECT> var = new LinkedList<>();
-
-AND
-
-You should use LinkedList or ArrayList with the List interface at least once in your code. For example:
-List<SOME_OBJECT> var = new LinkedList<>(); or List<SOME_OBJECT> var = new ArrayList<>();
-
-*/
 
 /** This class is the main entry point. */
 public class MapEngine {
@@ -67,8 +55,11 @@ public class MapEngine {
   public void showRoute() {
     C journey = null;
     C destination = null;
+    String fastLaneStr = "[";
+    List<String> fastLane = new LinkedList<>();
     List<String> visited = new ArrayList<>();
     Queue<String> queue = new LinkedList<>();
+    HashMap<String, String> parentMap = new HashMap<String, String>();
     // user input for starting point
     while (journey == null) {
       try {
@@ -86,32 +77,62 @@ public class MapEngine {
         System.out.println(e);
       }
     }
+
     String jName = journey.getCountry();
     String dName = destination.getCountry();
+
+    if (jName.equals(dName)) {
+      MessageCli.NO_CROSSBORDER_TRAVEL.printMessage();
+      return;
+    }
 
     // Using BFS and Queue interface to search the Adjacency Map
     queue.add(jName);
     visited.add(jName);
     while (!queue.isEmpty()) {
       String countries = queue.poll();
+      if (dName.equals(jName)) {
+        break;
+      }
       for (String name : adjMap.get(countries)) {
         if (!visited.contains(name)) {
+          // saves parent of node (name) for tracing back
+          parentMap.put(name, countries);
           visited.add(name);
           queue.add(name);
-          if (visited.contains(dName)) {
-            break;
-          }
         }
       }
     }
 
-    // search through visited starting from the start of the list (closest to root), and take the
-    // first country from that list that has a path to the destination and add to seperate list
-    // rinse and repeat until you get to the root (starting point) then you will have a list in
-    // reverse order of the shortest path from root to the destination
-    // make function for this in Utils
-    for (String name : visited) {
-      if (adjMap.get(dName).contains(name)) {}
+    // gets the shortest path by tracing back using parent maps
+    fastLane = Utils.fastLane(dName, parentMap, jName);
+    ArrayList<String> contList = new ArrayList<String>();
+    Integer taxSum = -Integer.parseInt(cSet.retrieve(jName).getTaxFees());
+    for (String country : fastLane) {
+      C counObject = cSet.retrieve(country);
+      taxSum += Integer.parseInt(counObject.getTaxFees());
+      if (!contList.contains(counObject.getContinent())) {
+        contList.add(counObject.getContinent());
+      }
+
+      if (country.equals(dName)) {
+        fastLaneStr = fastLaneStr + country + "]";
+      } else {
+        fastLaneStr = fastLaneStr + country + ", ";
+      }
     }
+    String contStr = "[";
+    int c = 0;
+    for (String cont : contList) {
+      c++;
+      if (c == contList.size()) {
+        contStr = contStr + cont + "]";
+      } else {
+        contStr = contStr + cont + ", ";
+      }
+    }
+    MessageCli.ROUTE_INFO.printMessage(fastLaneStr);
+    MessageCli.CONTINENT_INFO.printMessage(contStr);
+    MessageCli.TAX_INFO.printMessage(String.valueOf(taxSum));
   }
 }

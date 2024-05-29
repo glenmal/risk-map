@@ -3,6 +3,8 @@ package nz.ac.auckland.se281;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -102,5 +104,27 @@ public class Utils {
     } else {
       throw new CountryNotExistantException(MessageCli.INVALID_COUNTRY.getMessage(userInput));
     }
+  }
+
+  /**
+   * Traces back using the visited LinkedList to derive another list that shows the shortest path
+   * from the root to the destination country
+   *
+   * @param visited LinkedList of visited countries
+   * @param dName String of the destination name
+   * @param adjMap AdjacencyMap object
+   * @return returns the shortest path from the root to the destination countrys
+   */
+  public static LinkedList<String> fastLane(
+      String dName, HashMap<String, String> parentMap, String root) {
+    LinkedList<String> route = new LinkedList<String>();
+    route.add(dName);
+    String currentNode = dName;
+    while (parentMap.get(currentNode) != null) {
+      route.add(parentMap.get(currentNode));
+      currentNode = parentMap.get(currentNode);
+    }
+    Collections.reverse(route);
+    return route;
   }
 }
